@@ -1,18 +1,24 @@
-pipeline {
-  agent any
-  stages {
-    stage('Build') {
-      steps {
-        git(url: 'https://github.com/dframe/dframe', branch: 'master')
-        sh '''sh \'composer install\'
-'''
-        sh 'sh \'composer require phpunit/phpunit\''
-        sh 'sh \'vendor/bin/phpunit\''
-      }
+#!/usr/bin/env groovy
+
+node('master') {
+    try {
+        stage('build') {
+            checkout scm
+
+            sh "composer install"
+        }
+
+        stage('test') {
+            sh "./vendor/bin/phpunit"
+        }
+
+        stage('deploy') {
+            sh "echo 'WE ARE DEPLOYING'"
+        }
+    } catch(error) {
+        throw error
+    } finally {
+
     }
-  }
-  environment {
-    HTTP_HOST = 'dframeframework.com'
-    MOD_REWRITE = 'true'
-  }
+
 }
