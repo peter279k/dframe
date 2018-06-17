@@ -1,24 +1,21 @@
-#!/usr/bin/env groovy
-
-node('master') {
-    try {
-        stage('build') {
-            checkout scm
-
-            sh "composer install"
-        }
-
-        stage('test') {
-            sh "./vendor/bin/phpunit"
-        }
-
-        stage('deploy') {
-            sh "echo 'WE ARE DEPLOYING'"
-        }
-    } catch(error) {
-        throw error
-    } finally {
-
+pipeline {
+  agent any
+  stages {
+    stage('build') {
+        checkout scm
+        sh "composer install"
+    }
+      
+    stage('test') {
+        sh "./vendor/bin/phpunit"
     }
 
+    stage('deploy') {
+       sh "echo 'WE ARE DEPLOYING'"
+    }
+  }
+  environment {
+    HTTP_HOST = 'dframeframework.com'
+    MOD_REWRITE = 'true'
+  }
 }
